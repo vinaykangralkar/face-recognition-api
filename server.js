@@ -48,14 +48,17 @@ app.get('/', (req, res) => {
 })
 
 app.post('/signin', (req, res) => {
-    
+    const {email, password} = req.body;
+    if(!email || !password){
+        return res.status(400).json('incorrect form submission');
+    }
     db.select('email', 'hash').from('login')
-    .where('email', '=', req.body.email)
+    .where('email', '=', email)
     .then(data => {
-      const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
+      const isValid = bcrypt.compareSync(password, data[0].hash);
       if (isValid) {
         return db.select('*').from('users')
-          .where('email', '=', req.body.email)
+          .where('email', '=', email)
           .then(user => {
             res.json(user[0])
           })
@@ -69,6 +72,9 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const {name, email, password} = req.body;
+    if(!name || !email || !password){
+        return res.status(400).json('incorrect form submission');
+    }
     const hash = bcrypt.hashSync(password);
     db.transaction(trx => {
         trx.insert({
@@ -119,6 +125,6 @@ app.put('/image', (req, res) => {
     .catch(error => res.status(400).json('unable to get entries'))
 })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log("Cool!!!");
 })
