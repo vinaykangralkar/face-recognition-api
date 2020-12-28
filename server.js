@@ -13,10 +13,12 @@ const db = knex({
   // connect to your own database here
   client: 'pg',
   connection: {
-    host : '127.0.0.1',
-    user : 'vinaykangralkar',
-    password : '',
-    database : 'face-recognition'
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
+    // host : '127.0.0.1',
+    // user : 'vinaykangralkar',
+    // password : '',
+    // database : 'face-recognition'
   }
 });
 
